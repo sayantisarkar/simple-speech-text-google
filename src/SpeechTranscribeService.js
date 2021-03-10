@@ -12,11 +12,25 @@ class SpeechTranscribeService {
         return axios.get(TRANSCRIBE_REST_API_URL);
     }
     getSearchTranscription(searchRecord){
-      const record = {
-         details: searchRecord
-       };
-        return axios.post(SEARCH_REST_API_URL,record);
-    }
-}
+        var audioFile = new File([searchRecord], "myaudio.webm", {type: searchRecord.options.mimeType});
+        const formData = new FormData();
+        formData.append('file', audioFile);
+        console.log("Check file:"+audioFile.name);
 
+        // return axios.post(SEARCH_REST_API_URL,formData);
+
+
+        axios({
+          method : 'post',
+          url : SEARCH_REST_API_URL,
+          data : formData,
+          headers : {
+                'Content-Type': 'multipart/form-data'
+          }
+        }).then((res)=>{
+          console.log("Your search transcript is",res);
+        }).catch((err) => {
+          throw err});
+     }
+}
 export default new SpeechTranscribeService();
