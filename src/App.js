@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import './App.css';
 import { ReactMic }  from 'react-mic'
 import SpeechTranscribeService from './SpeechTranscribeService.js'
+import CloudDownloadIcon    from '@material-ui/icons/CloudDownload'
+
 
 class App extends Component {
 
@@ -9,6 +11,8 @@ class App extends Component {
     constructor(props) {
       super(props);
       this.state = {
+        downloadLinkURL: null,
+        //blobURL: null,
         isRecording: false
       }
     }
@@ -23,7 +27,8 @@ class App extends Component {
 
     onSave= (blobObject) => {
       console.log("I m here");
-      SpeechTranscribeService.getSearchTranscription(blobObject);
+      this.setState({ downloadLinkURL: blobObject.blobURL })
+      //SpeechTranscribeService.getSearchTranscription(blobObject);
       //this.setState({ downloadLinkURL: blobObject.blobURL })
     }
 
@@ -31,14 +36,18 @@ class App extends Component {
       console.log('chunk of real-time data is: ', recordedBlob);
     }
 
-    onStop(recordedBlob) {
-      console.log('recordedBlob is: ', recordedBlob);
+    onStop(blobObject) {
+      console.log('recordedBlob is: ', blobObject);
+      //this.setState({ blobURL: blobObject.blobURL });
+      SpeechTranscribeService.getSearchTranscription(blobObject);
     }
 
   render() {
       const {
-        isRecording
-      } = this.state
+        isRecording,
+      //  blobURL,
+        downloadLinkURL
+     } = this.state
 
   return (
     <div>
@@ -54,6 +63,15 @@ class App extends Component {
        backgroundColor="#FF4081" />
      <button onClick={this.startRecording} type="button">Start</button>
      <button onClick={this.stopRecording} type="button">Stop</button>
+
+     <div className="column download">
+       <a
+         href={downloadLinkURL}
+         download="recording.webm"
+       >
+         <CloudDownloadIcon />
+       </a>
+     </div>
    </div>
   )
  }

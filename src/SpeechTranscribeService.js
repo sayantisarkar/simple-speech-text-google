@@ -12,10 +12,15 @@ class SpeechTranscribeService {
         return axios.get(TRANSCRIBE_REST_API_URL);
     }
     getSearchTranscription(searchRecord){
-        var audioFile = new File([searchRecord], "myaudio.webm", {type: searchRecord.options.mimeType});
+
+
+        var audioFile = new File([searchRecord.blob], "myaudio.webm", {type: searchRecord.options.mimeType});
+        //var audioFile = searchRecord.blob;
+        //const audioFile = new Blob(searchRecord, { 'type': 'audio/webm; codecs=opus' });
         const formData = new FormData();
-        formData.append('file', audioFile);
-        console.log("Check file:"+audioFile.name);
+        formData.append('sourceFile', audioFile);
+        formData.append('duration',searchRecord.stopTime-searchRecord.startTime);
+        //console.log("Check file:"+audioFile.name);
 
         // return axios.post(SEARCH_REST_API_URL,formData);
 
